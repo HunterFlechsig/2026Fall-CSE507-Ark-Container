@@ -20,6 +20,14 @@ The experiment_scripts directory provides scripts for running experiments. Scrip
 
 (For practice 1/demo 1 you should run the experiments in the above order)
 
+Additional scripts train on MIMIC-CXR and CheXpert:
+
+- mimic_only: Train a student/teacher Ark model on MIMIC-CXR only.
+- chexpert_only: Train a student/teacher Ark model on CheXpert only.
+- vindr_cxr_chestxray14_mimic_chexpert_cyclic: Train a student/teacher Ark model on VinDr-CXR, ChestX-ray14, MIMIC-CXR, and CheXpert cyclically.
+- vindr_cxr_chestxray14_mimic_chexpert_concurrent_random_sampling: Train a student/teacher Ark model on VinDr-CXR, ChestX-ray14, MIMIC-CXR, and CheXpert concurrently with random sampling.
+- vindr_cxr_chestxray14_mimic_chexpert_concurrent_equal_sampling: Train a student/teacher Ark model on VinDr-CXR, ChestX-ray14, MIMIC-CXR, and CheXpert concurrently with equal sampling.
+
 ### Running Experiments
 
 A start and resume script are provided for each of the experiments, and they both require a seed as an argument. They should be run by running the following command from the root of the repository:
@@ -33,6 +41,21 @@ A start and resume script are provided for each of the experiments, and they bot
 ```
 
 The resume scripts will resume training from the latest completed epoch/cycle.
+
+From the repository root on Sol, submit the same script with `sbatch`:
+
+```bash
+sbatch experiment_scripts/vindr_cxr_only/start_vindr_cxr_only.sh 100
+sbatch experiment_scripts/vindr_cxr_only/resume_vindr_cxr_only.sh 100
+```
+
+Each script requests account `grp_jliang12`, QoS `public`, partitions `htc,public`, 1 GPU, 16 CPUs, 64G, and 4 hours. Training stops after 100 cycles. The global batch size stays 200. Logs are written to `slurm-logs/`. A 4-hour job can end before cycle 100, so submit the matching resume script with the same seed.
+
+To see how many cycles each experiment has finished:
+
+```bash
+./experiment_scripts/cycle_progress.sh
+```
 
 ## Experiment Output
 

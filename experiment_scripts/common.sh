@@ -68,6 +68,38 @@ ark_device_count() {
     printf '%s\n' "$count"
 }
 
+ark_selected_datasets() {
+    local arg
+    local take_value=false
+    local -a selected=()
+
+    for arg in "$@"; do
+        if [[ "$take_value" == true ]]; then
+            selected+=("$arg")
+            take_value=false
+            continue
+        fi
+        case "$arg" in
+            --data_set)
+                take_value=true
+                ;;
+            --data_set=*)
+                selected+=("${arg#--data_set=}")
+                ;;
+        esac
+    done
+
+    if [[ "$take_value" == true ]]; then
+        echo "Missing value for --data_set" >&2
+        return 2
+    fi
+    if [[ ${#selected[@]} -eq 0 ]]; then
+        echo "No datasets were provided" >&2
+        return 2
+    fi
+    printf '%s\n' "${selected[@]}"
+}
+
 ark_launch_experiment() {
     local container="$1"
     local experiment_name="$2"
@@ -83,6 +115,15 @@ ark_launch_experiment() {
         echo "Seed must be an integer: $seed" >&2
         return 2
     fi
+
+    local dataset_lines
+    local dataset
+    local -a dataset_list=()
+    dataset_lines=$(ark_selected_datasets "$@") || return 2
+    while IFS= read -r dataset; do
+        [[ -n "$dataset" ]] && dataset_list+=("$dataset")
+    done <<< "$dataset_lines"
+    "$EXPERIMENT_SCRIPTS_ROOT/check_dataset_dirs.sh" "${dataset_list[@]}"
 
     local wrapper
     local device
@@ -110,7 +151,7 @@ ark_launch_experiment() {
         --batch_size 200
         --model swin_base
         --init imagenet
-        --pretrain_epochs 200
+        --pretrain_epochs 100
         --pretrained_weights https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_base_patch4_window7_224_22kto1k.pth
         --momentum_teacher 0.9
         --projector_features 1376

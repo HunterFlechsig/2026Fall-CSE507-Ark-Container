@@ -8,3 +8,9 @@ base/Models/
 
 # Python bytecode caches
 __pycache__/
+
+# Slurm job logs
+slurm-logs/*
+!slurm-logs/.gitkeep
+slurm-*.out
+slurm-*.err
