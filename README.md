@@ -49,7 +49,7 @@ sbatch experiment_scripts/vindr_cxr_only/start_vindr_cxr_only.sh 100
 sbatch experiment_scripts/vindr_cxr_only/resume_vindr_cxr_only.sh 100
 ```
 
-Each script requests account `grp_jliang12`, QoS `public`, partitions `htc,public`, 1 GPU, 16 CPUs, 64G, and 4 hours. Training stops after 100 cycles. The global batch size stays 200. Logs are written to `slurm-logs/`. A 4-hour job can end before cycle 100, so submit the matching resume script with the same seed.
+Each script requests account `grp_jliang12`, QoS `public`, partitions `htc,public`, one 80GB A100, 16 CPUs, 64G, and 4 hours. Training stops after 100 cycles. The global batch size stays 200, and that batch runs on the single 80GB GPU. Logs are written to `slurm-logs/`. A 4-hour job can end before cycle 100, so submit the matching resume script with the same seed.
 
 To see how many cycles each experiment has finished:
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sol job for grp_jliang12: htc or public, 1 GPU, 16 CPUs, 64G, 4 hours.
+# Sol job for grp_jliang12: htc or public, one 80GB A100, 16 CPUs, 64G, 4 hours.
 #SBATCH --job-name=start_vindr_cxr_only
 #SBATCH --account=grp_jliang12
 #SBATCH --partition=htc,public
@@ -7,7 +7,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
-#SBATCH --gpus=1
+#SBATCH --gpus=a100:1
+#SBATCH --constraint=a100_80
 #SBATCH --mem=64G
 #SBATCH --time=04:00:00
 #SBATCH --output=slurm-logs/%x-%j.out

@@ -5,7 +5,8 @@
 #   account=grp_jliang12
 #   partition=htc,public
 #   qos=public
-#   gpus=1
+#   gpus=a100:1
+#   constraint=a100_80
 #   cpus=16
 #   mem=64G
 #   time=04:00:00
@@ -29,11 +30,11 @@ Environment:
   ARK_SBATCH_PARTITION   default htc,public; gaudi default gaudi
   ARK_SBATCH_QOS         default public
   ARK_SBATCH_ACCOUNT     default grp_jliang12
-  ARK_SBATCH_GPUS        default 1; gaudi default hl225:8
+  ARK_SBATCH_GPUS        default a100:1; gaudi default hl225:8
   ARK_SBATCH_CPUS        default 16, or 64 for gaudi
   ARK_SBATCH_MEM         default 64G, or 256G for gaudi
   ARK_SBATCH_TIME        default 04:00:00
-  ARK_SBATCH_CONSTRAINT  optional node feature, such as a100_80
+  ARK_SBATCH_CONSTRAINT  default a100_80; unset for gaudi unless provided
 EOF
 }
 
@@ -82,7 +83,7 @@ esac
 
 partition=htc,public
 qos=public
-gpus=1
+gpus=a100:1
 cpus=16
 mem=64G
 time_limit=04:00:00
@@ -110,7 +111,11 @@ cpus=${ARK_SBATCH_CPUS:-$cpus}
 mem=${ARK_SBATCH_MEM:-$mem}
 time_limit=${ARK_SBATCH_TIME:-$time_limit}
 account=${ARK_SBATCH_ACCOUNT:-$account}
-constraint=${ARK_SBATCH_CONSTRAINT:-}
+if [[ "$container" == "gaudi" ]]; then
+    constraint=${ARK_SBATCH_CONSTRAINT:-}
+else
+    constraint=${ARK_SBATCH_CONSTRAINT:-a100_80}
+fi
 
 mkdir -p "$REPO_ROOT/slurm-logs"
 
