@@ -72,7 +72,7 @@ planned_cycles() {
     local planned
 
     if [[ -f "$train_log" ]]; then
-        planned=$(sed -n 's/.*Cycles:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$train_log" | tail -n 1)
+        planned=$(sed -n '/Warmup Cycles:/d; s/.*Cycles:[[:space:]]*\([0-9][0-9]*\).*/\1/p' "$train_log" | tail -n 1)
         if [[ -n "$planned" ]]; then
             printf '%s\n' "$planned"
             return 0
