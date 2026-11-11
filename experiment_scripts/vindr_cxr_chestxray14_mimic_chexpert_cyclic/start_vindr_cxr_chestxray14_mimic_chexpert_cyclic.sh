@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
-# Sol job for grp_jliang12: htc or public, one 80GB A100, 16 CPUs, 64G, 4 hours.
+# Sol job for grp_jliang12: public partition, one 80GB A100, 16 CPUs, 128G, 24 hours.
 #SBATCH --job-name=start_vindr_cxr_chestxray14_mimic_chexpert_cyclic
 #SBATCH --account=grp_jliang12
-#SBATCH --partition=htc,public
+#SBATCH --partition=public
 #SBATCH --qos=public
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=16
 #SBATCH --gpus=a100:1
 #SBATCH --constraint=a100_80
-#SBATCH --mem=64G
-#SBATCH --time=04:00:00
+#SBATCH --mem=128G
+#SBATCH --time=24:00:00
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=hflechsi@asu.edu
 #SBATCH --output=slurm-logs/%x-%j.out
 #SBATCH --error=slurm-logs/%x-%j.err
 set -euo pipefail

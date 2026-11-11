@@ -3,13 +3,15 @@
 #
 # Matches the #SBATCH headers in each training script:
 #   account=grp_jliang12
-#   partition=htc,public
+#   partition=public
 #   qos=public
 #   gpus=a100:1
 #   constraint=a100_80
 #   cpus=16
-#   mem=64G
-#   time=04:00:00
+#   mem=128G
+#   time=24:00:00
+#   mail-user=hflechsi@asu.edu
+#   mail-type=ALL
 #
 # The job is one task. torch.distributed uses the GPU assigned to that task.
 # Global batch size stays 200. Training stops after 100 cycles.
@@ -27,13 +29,13 @@ usage() {
 Usage: $0 <training-script> <seed> [nvidia|gaudi]
 
 Environment:
-  ARK_SBATCH_PARTITION   default htc,public; gaudi default gaudi
+  ARK_SBATCH_PARTITION   default public; gaudi default gaudi
   ARK_SBATCH_QOS         default public
   ARK_SBATCH_ACCOUNT     default grp_jliang12
   ARK_SBATCH_GPUS        default a100:1; gaudi default hl225:8
   ARK_SBATCH_CPUS        default 16, or 64 for gaudi
-  ARK_SBATCH_MEM         default 64G, or 256G for gaudi
-  ARK_SBATCH_TIME        default 04:00:00
+  ARK_SBATCH_MEM         default 128G, or 256G for gaudi
+  ARK_SBATCH_TIME        default 24:00:00
   ARK_SBATCH_CONSTRAINT  default a100_80; unset for gaudi unless provided
 EOF
 }
@@ -81,12 +83,12 @@ case "$(basename "$training_script")" in
         ;;
 esac
 
-partition=htc,public
+partition=public
 qos=public
 gpus=a100:1
 cpus=16
-mem=64G
-time_limit=04:00:00
+mem=128G
+time_limit=24:00:00
 account=grp_jliang12
 
 if [[ "$container" == "gaudi" ]]; then
@@ -130,6 +132,8 @@ sbatch_args=(
     --cpus-per-task "$cpus"
     --mem "$mem"
     --time "$time_limit"
+    --mail-type ALL
+    --mail-user hflechsi@asu.edu
     --chdir "$REPO_ROOT"
     --output "slurm-logs/%x-%j.out"
     --error "slurm-logs/%x-%j.err"
